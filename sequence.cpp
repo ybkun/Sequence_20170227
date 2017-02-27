@@ -1,13 +1,18 @@
 #include<iostream>
 #include<Windows.h>
+#include<random>
+#include<time.h>
 
 using namespace std;
 
 int a, b, c; // a[1],a[2],a[3]
 //int tmp;
 
-/*_a,_b,_c all need to be positive*/
-void set_base(int _a, int _b, int _c) {
+/*
+设置数列前三项
+要求为整数，可以为0
+*/
+void set_base(int _a, int _b, int _c) { 
 	a = _a;
 	b = _b;
 	c = _c;
@@ -16,7 +21,12 @@ void set_base(int _a, int _b, int _c) {
 int seq_get(int n) {
 	int tmp;
 	int count_same=0;
-	for (int i = 4; i <= n; i++) {
+	if (n < 4) return -1; // 仅计算数列第4项及之后的值
+
+	/*
+	第20项以后的值必然为同一值
+	*/
+	for (int i = 4; i <= 25 && i <= n ; i++) {
 		tmp = a + b;
 		if (tmp >= 20) {
 			tmp = tmp / 2;
@@ -30,6 +40,9 @@ int seq_get(int n) {
 				break;
 			}
 		}
+		else {
+			count_same = 0;
+		}
 	}
 	return tmp;
 }
@@ -38,21 +51,25 @@ int main() {
 	LARGE_INTEGER large_integer;
 	double dff;
 	__int64 st, ed;
+	int ans,_a,_b,_c;
 
-	set_base(4, 256814, 47);
 	QueryPerformanceFrequency(&large_integer);
 	dff = large_integer.QuadPart;
+	srand(time(NULL));
+	_a = rand();
+	_b = rand();
+	_c = rand();
+	set_base(_a, _b, _c);
 	QueryPerformanceCounter(&large_integer);
 	st = large_integer.QuadPart;
-	//seq_get(9999);
-	for (int i = 7; i < 9999; i += 6) {
-		cout << i << " : " << seq_get(i) << endl;
-	}
+	ans = seq_get(9999);
 	QueryPerformanceCounter(&large_integer);
 	ed = large_integer.QuadPart;
 	
-
-	//cout << "ans: " << c << endl;
+	cout << "a[1]: " << _a << "\ta[2]: " << _b << "\ta[3]: " << _c << endl;
+	cout << "a[9999]: " << ans << endl;
+	cout.setf(ios::fixed);
+	//cout.precision(12);
 	cout << "time: " << (ed - st) * 1000 / dff << "毫秒" << endl;
 	system("pause");
 }
